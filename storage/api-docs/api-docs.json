@@ -1,0 +1,296 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Parking Spot API",
+        "description": "API documentation for Parking Lot Management System",
+        "contact": {
+            "email": "support@example.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000/api",
+            "description": "Local Development Server"
+        },
+        {
+            "url": "http://localhost:8000/api/v1"
+        }
+    ],
+    "paths": {
+        "/parking-lot": {
+            "get": {
+                "summary": "Get availability for all parking lots",
+                "operationId": "944148a8fd4c3edd2287278261573a3e",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "parking_lot_id": {
+                                                "type": "integer"
+                                            },
+                                            "total_spots": {
+                                                "type": "integer"
+                                            },
+                                            "occupied_spots": {
+                                                "type": "integer"
+                                            },
+                                            "available_spots": {
+                                                "type": "integer"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/parking-lot/{parkingMasterId}": {
+            "get": {
+                "summary": "Get parking lot status by ID",
+                "operationId": "013a720aea737449470f6cfd727c9c6f",
+                "parameters": [
+                    {
+                        "name": "parkingMasterId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Parking Lot Status",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "parking_lot_id": {
+                                            "type": "integer"
+                                        },
+                                        "total_spots": {
+                                            "type": "integer"
+                                        },
+                                        "available_spots": {
+                                            "type": "integer"
+                                        },
+                                        "occupied_spots": {
+                                            "type": "integer"
+                                        },
+                                        "spots": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "spot_no": {
+                                                        "type": "integer"
+                                                    },
+                                                    "status": {
+                                                        "type": "string"
+                                                    },
+                                                    "vehicle_type": {
+                                                        "type": "string"
+                                                    },
+                                                    "vehicle_number": {
+                                                        "type": "string"
+                                                    },
+                                                    "in_time": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/parking-spot/{spot_id}/park": {
+            "post": {
+                "summary": "Park a vehicle",
+                "operationId": "6524fedc2e90c1935b441c1abe84814f",
+                "parameters": [
+                    {
+                        "name": "spot_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "vehicle_type",
+                                    "vehicle_number",
+                                    "parking_master_id"
+                                ],
+                                "properties": {
+                                    "vehicle_type": {
+                                        "type": "string"
+                                    },
+                                    "vehicle_number": {
+                                        "type": "string"
+                                    },
+                                    "parking_master_id": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Vehicle parked successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/parking-spot/{spot_id}/unpark": {
+            "delete": {
+                "tags": [
+                    "Parking Management"
+                ],
+                "summary": "Unpark a vehicle from a specific spot",
+                "description": "Marks the vehicle as unparked by setting the out_time and soft deleting the parking record.",
+                "operationId": "e816429379f6165458f7baa187d7c4a8",
+                "parameters": [
+                    {
+                        "name": "spot_id",
+                        "in": "path",
+                        "description": "The ID of the parking spot",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "parking_master_id"
+                                ],
+                                "properties": {
+                                    "parking_master_id": {
+                                        "description": "The ID of the parking lot master",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Vehicle unparked successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Vehicle unparked successfully. Spot is now free."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "No vehicle found or already unparked",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No vehicle found in this spot or it has already been unparked."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error while unparking the vehicle",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "An error occurred while unparking the vehicle."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Parking Management",
+            "description": "API Endpoints related to Parking Management"
+        }
+    ]
+}
